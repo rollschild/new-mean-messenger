@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 
+import { Post } from '../post.model';
+import { PostsService } from '../posts.service';
+
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
@@ -13,5 +16,10 @@ export class PostListComponent {
   ];
   */
   @Input()
-  posts = []; // only from the direct parent
+  posts: Post[] = []; // only from the direct parent
+  // postsService: PostsService;
+
+  constructor(public postsService: PostsService) {
+    // this.postsService = postsService;
+  }
 }
