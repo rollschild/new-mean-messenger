@@ -9,8 +9,10 @@ import { Post } from './posts/post.model';
 })
 export class AppComponent {
   // title = 'new-mean-messenger';
+  /*
   storedPosts: Post[] = [];
   onPostAdded(post) {
     this.storedPosts.push(post);
   }
+  */
 }
