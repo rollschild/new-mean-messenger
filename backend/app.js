@@ -6,7 +6,23 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+
+const mongoose = require('mongoose');
+mongoose
+  .connect(
+    'mongodb+srv://rollschild:uWVwvAOZD3ywymgs@rollscluster-j6avi.gcp.mongodb.net/new-mean-messenger?retryWrites=true',
+  )
+  .then(() => {
+    console.log('Connected to mongoDB successfully!');
+  })
+  .catch(() => {
+    console.log('Connection failed!');
+  });
+
 const app = express();
+
+const Post = require('./models/post');
+
 /*
 app.use((req, res, next) => {
   console.log('First middleware');
@@ -37,8 +53,13 @@ app.use((req, res, next) => {
 });
 
 app.post('/api/posts', (req, res, next) => {
-  const post = req.body;
-  console.log(post);
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
+
+  post.save();
+
   res.status(201).json({
     message: 'Post added!',
   });
@@ -46,6 +67,15 @@ app.post('/api/posts', (req, res, next) => {
 
 app.get('/api/posts', (req, res, next) => {
   // res.send('Hello from Express...');
+
+  Post.find().then(documents => {
+    res.status(200).json({
+      message: 'Posts fetched successfully.',
+      posts: documents,
+    });
+    // console.log(documents);
+  });
+  /*
   const posts = [
     {
       id: '2037',
@@ -58,10 +88,7 @@ app.get('/api/posts', (req, res, next) => {
       content: 'From server, too.',
     },
   ];
-  res.status(200).json({
-    message: 'Posts fetched successfully.',
-    posts: posts,
-  });
+  */
 });
 
 module.exports = app;
