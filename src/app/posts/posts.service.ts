@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Post } from './post.model';
 
@@ -11,8 +12,21 @@ export class PostsService {
   // we should listen to this subject
   private postsUpdated = new Subject<Post[]>();
 
+  constructor(private http: HttpClient) {}
+
   getPosts() {
-    return [...this.posts]; // creating a new array
+    // creating a new array
+    // return [...this.posts];
+
+    this.http
+      .get<{ message: string; posts: Post[] }>(
+        'http://localhost:3000/api/posts'
+      )
+      .subscribe(postData => {
+        this.posts = postData.posts;
+        this.postsUpdated.next([...this.posts]);
+      });
+    // Angular's httpclient uses observables
   }
 
   getPostsUpdateListener() {
@@ -21,11 +35,21 @@ export class PostsService {
 
   addPost(title: string, content: string) {
     const post: Post = {
+      id: null,
       title: title,
       content: content
     };
+    this.http
+      .post<{ message: string }>('http://localhost:3000/api/posts', post)
+      .subscribe(responseData => {
+        console.log(responseData);
+        this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      }); // asynchronous
+    /*
     this.posts.push(post);
     this.postsUpdated.next([...this.posts]);
+    */
   }
 }
 
