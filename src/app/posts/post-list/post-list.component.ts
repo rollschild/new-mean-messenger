@@ -18,6 +18,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   */
   // @Input() // only from the direct parent
   posts: Post[] = [];
+  isLoading = false;
   private postsSubscription: Subscription;
   // postsService: PostsService;
 
@@ -28,11 +29,13 @@ export class PostListComponent implements OnInit, OnDestroy {
   // automatically run by Angular when
   // ...this component is created
   ngOnInit() {
+    this.isLoading = true;
     // basic initialization tasks
     this.postsService.getPosts();
     this.postsSubscription = this.postsService
       .getPostsUpdateListener()
       .subscribe((posts: Post[]) => {
+        this.isLoading = false;
         this.posts = posts;
       });
     // we need to make sure when this component is

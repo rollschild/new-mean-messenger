@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Post } from './post.model';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 // only create one instance of the service
@@ -13,7 +14,7 @@ export class PostsService {
   // we should listen to this subject
   private postsUpdated = new Subject<Post[]>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPosts() {
     // creating a new array
@@ -60,6 +61,7 @@ export class PostsService {
         post.id = id;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       }); // asynchronous
   }
 
@@ -86,6 +88,7 @@ export class PostsService {
         // console.log(this.posts);
         // console.log(updatedPosts);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
