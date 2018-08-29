@@ -3,7 +3,7 @@
   response, remember to use next()
 
 */
-
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const postsRoutes = require('./routes/posts');
@@ -37,6 +37,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Allow backend/images folder be statically accessed by external requests
+app.use('/images', express.static(path.join('backend/images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
