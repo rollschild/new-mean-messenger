@@ -8,7 +8,7 @@ import { Observable, Observer, of } from 'rxjs';
 export const mimeType = (
   control: AbstractControl
 ): Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
-  if (typeof control.value === 'string') {
+  if (!control.value || typeof control.value === 'string') {
     return of(null);
     // of is a quick way to create observable
   }
@@ -20,7 +20,10 @@ export const mimeType = (
   const fileReadObs = Observable.create(
     (observer: Observer<{ [key: string]: any }>) => {
       fileReader.addEventListener('loadend', () => {
-        const arr = new Uint8Array(fileReader.result).subarray(0, 4);
+        const arr = new Uint8Array(<ArrayBuffer>fileReader.result).subarray(
+          0,
+          4
+        );
         let header = '';
         let isValid = false;
         for (let i = 0; i < arr.length; i++) {

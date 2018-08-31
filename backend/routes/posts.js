@@ -35,6 +35,7 @@ router.post(
   multer({ storage: storage }).single('image'),
   (req, res, next) => {
     const url = req.protocol + '://' + req.get('host');
+    // console.log(req.file.filename);
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
@@ -61,14 +62,27 @@ router.post(
 
 router.get('', (req, res, next) => {
   // res.send('Hello from Express...');
-
-  Post.find().then(documents => {
-    res.status(200).json({
-      message: 'Posts fetched successfully.',
-      posts: documents,
+  const pageSize = +req.query.pagesize;
+  // string to int conversion
+  const currentPage = +req.query.page;
+  const postQuery = Post.find(); // will NOT execute
+  let fetchedPosts;
+  // ...until then() is called.
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+  postQuery
+    .then(documents => {
+      fetchedPosts = documents;
+      return Post.count();
+    })
+    .then(count => {
+      res.status(200).json({
+        message: 'Posts fetched successfully.',
+        posts: fetchedPosts,
+        maxPosts: count,
+      });
     });
-    // console.log(documents);
-  });
 });
 
 router.delete('/:id', (req, res, next) => {
